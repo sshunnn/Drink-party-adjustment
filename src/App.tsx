@@ -19,46 +19,64 @@ function App() {
   const [isLoaded, setIsLoaded] = useState(false);
   const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
 
-  // Load from LocalStorage
+  // Fetch from Vercel API
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
+    const loadData = async () => {
       try {
-        const parsed = JSON.parse(saved);
-        setEventData({
-          dates: parsed.dates || [],
-          locations: parsed.locations || [],
-          participants: parsed.participants || [],
-          votes: parsed.votes || [],
-        });
+        const response = await fetch('/api/event');
+        if (response.ok) {
+          const parsed = await response.json();
+          setEventData({
+            dates: parsed.dates || [],
+            locations: parsed.locations || [],
+            participants: parsed.participants || [],
+            votes: parsed.votes || [],
+          });
+        }
       } catch (e) {
-        console.error('Failed to parse local storage data', e);
+        console.error('Failed to fetch data from API', e);
+      } finally {
+        setIsLoaded(true);
       }
-    }
-    setIsLoaded(true);
+    };
+    loadData();
   }, []);
 
-  // Save to LocalStorage
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(eventData));
+  // Sync state changes to API
+  const syncToAPI = async (newData: EventData) => {
+    try {
+      await fetch('/api/event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newData)
+      });
+    } catch (e) {
+      console.error('Failed to save data to API', e);
     }
-  }, [eventData, isLoaded]);
+  };
+
+  const updateEventData = (updater: (prev: EventData) => EventData) => {
+    setEventData(prev => {
+      const newData = updater(prev);
+      syncToAPI(newData);
+      return newData;
+    });
+  };
 
   const handleUpdateDates = (newDates: Candidate[]) => {
-    setEventData(prev => ({ ...prev, dates: newDates }));
+    updateEventData(prev => ({ ...prev, dates: newDates }));
   };
 
   const handleUpdateLocations = (newLocations: Candidate[]) => {
-    setEventData(prev => ({ ...prev, locations: newLocations }));
+    updateEventData(prev => ({ ...prev, locations: newLocations }));
   };
 
   const handleUpdateParticipants = (newParticipants: Candidate[]) => {
-    setEventData(prev => ({ ...prev, participants: newParticipants }));
+    updateEventData(prev => ({ ...prev, participants: newParticipants }));
   };
 
   const handleAddVote = (vote: VoteRecord) => {
-    setEventData(prev => {
+    updateEventData(prev => {
       const existingIndex = prev.votes.findIndex(v => v.id === vote.id);
       if (existingIndex >= 0) {
         const newVotes = [...prev.votes];
@@ -70,7 +88,7 @@ function App() {
   };
 
   const handleDeleteVote = (voteId: string) => {
-    setEventData(prev => ({
+    updateEventData(prev => ({
       ...prev,
       votes: prev.votes.filter(v => v.id !== voteId)
     }));
@@ -78,7 +96,7 @@ function App() {
 
   const handleReset = () => {
     if (confirm('すべてのデータをリセットしますか？')) {
-      setEventData(initialData);
+      updateEventData(() => initialData);
     }
   };
 
