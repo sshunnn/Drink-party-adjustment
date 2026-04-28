@@ -32,31 +32,33 @@ export default function VotingTable({ eventData, onAddVote, onDeleteVote }: Voti
     localStorage.setItem('my_vote_ids', JSON.stringify(updated));
   };
 
-  const setVote = (type: 'date' | 'location', id: string, vote: VoteType) => {
-    if (type === 'date') {
-      setDateVotes(prev => ({ ...prev, [id]: prev[id] === vote ? null : vote }));
-    } else {
-      if (vote === 'yes') {
-        const yesCount = Object.values(locationVotes).filter(v => v === 'yes').length;
-        if (locationVotes[id] !== 'yes' && yesCount >= 2) {
-          alert('場所で「〇」をつけられるのは最大2つまでです。');
-          return;
-        }
+  const setVote = (type: 'date', id: string, vote: VoteType) => {
+    setDateVotes(prev => ({ ...prev, [id]: prev[id] === vote ? null : vote }));
+  };
+
+  // Location: tap to toggle yes. Unselected = auto no on submit.
+  const toggleLocation = (id: string) => {
+    const isYes = locationVotes[id] === 'yes';
+    if (!isYes) {
+      const yesCount = Object.values(locationVotes).filter(v => v === 'yes').length;
+      if (yesCount >= 2) {
+        alert('行きたい場所は最大2つまで選べます。');
+        return;
       }
-      setLocationVotes(prev => ({ ...prev, [id]: prev[id] === vote ? null : vote }));
     }
+    setLocationVotes(prev => ({ ...prev, [id]: isYes ? null : 'yes' }));
   };
 
   const unvotedDatesCount = eventData.dates.filter(d => dateVotes[d.id] === undefined || dateVotes[d.id] === null).length;
-  const unvotedLocationsCount = eventData.locations.filter(l => locationVotes[l.id] === undefined || locationVotes[l.id] === null).length;
-  
+
   // Step completion logic
   const isStep1Done = voterName !== '';
   const isStep2Done = isStep1Done && unvotedDatesCount === 0;
-  const isStep3Done = isStep2Done && unvotedLocationsCount === 0;
-  
-  // Submit is allowed if all configured sections are voted
-  const canSubmit = (eventData.dates.length === 0 || isStep2Done) && (eventData.locations.length === 0 || isStep3Done) && isStep1Done;
+  // Step3: location step is always ready once step2 is done (not selecting = auto ×)
+  const isStep3Done = isStep2Done;
+
+  // Submit is allowed when name + all dates voted
+  const canSubmit = isStep1Done && (eventData.dates.length === 0 || isStep2Done);
 
   const renderVoteIcon = (vote: VoteType) => {
     if (vote === 'yes') return '〇';
@@ -67,11 +69,17 @@ export default function VotingTable({ eventData, onAddVote, onDeleteVote }: Voti
   const submitVote = () => {
     if (!canSubmit) return;
 
+    // Auto-fill 'no' for unselected locations
+    const finalLocationVotes: Record<string, VoteType> = {};
+    eventData.locations.forEach(l => {
+      finalLocationVotes[l.id] = locationVotes[l.id] === 'yes' ? 'yes' : 'no';
+    });
+
     const voteRecord: VoteRecord = {
       id: Math.random().toString(36).substring(2, 9),
       name: voterName,
       dateVotes: { ...dateVotes },
-      locationVotes: { ...locationVotes }
+      locationVotes: finalLocationVotes
     };
 
     onAddVote(voteRecord);
@@ -165,29 +173,59 @@ export default function VotingTable({ eventData, onAddVote, onDeleteVote }: Voti
           <div className={`step-section ${!isStep2Done ? 'step-disabled' : ''}`}>
             <div className="step-header">
               <span className="step-number">3</span>
-              場所の希望を選んでください (最大2つまで〇)
-              {isStep3Done && <Check size={20} style={{ color: 'var(--vote-yes)', marginLeft: 'auto' }} />}
+              行きたい場所をタップしてください（最大2つ）
+              <span style={{ marginLeft: 'auto', fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 'normal' }}>
+                {Object.values(locationVotes).filter(v => v === 'yes').length} / 2 選択中
+              </span>
             </div>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1rem' }}>
+              ※ 選ばなかった場所は自動的に「×」になります
+            </p>
             <div className="flex-col gap-2">
-              {eventData.locations.map(l => (
-                <div key={l.id} className="choice-card">
-                  <span className="choice-card-title">{l.name}</span>
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => setVote('location', l.id, 'yes')}
-                      className={`vote-btn ${locationVotes[l.id] === 'yes' ? 'yes' : ''}`}
-                    >
-                      〇
-                    </button>
-                    <button 
-                      onClick={() => setVote('location', l.id, 'no')}
-                      className={`vote-btn ${locationVotes[l.id] === 'no' ? 'no' : ''}`}
-                    >
-                      ×
-                    </button>
-                  </div>
-                </div>
-              ))}
+              {eventData.locations.map(l => {
+                const isSelected = locationVotes[l.id] === 'yes';
+                return (
+                  <button
+                    key={l.id}
+                    onClick={() => toggleLocation(l.id)}
+                    style={{
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: '1rem 1.5rem',
+                      borderRadius: '12px',
+                      border: isSelected ? '2px solid var(--vote-yes)' : '2px solid transparent',
+                      background: isSelected
+                        ? 'rgba(16, 185, 129, 0.15)'
+                        : 'var(--bg-secondary)',
+                      color: 'var(--text-primary)',
+                      fontSize: '1.05rem',
+                      fontWeight: '500',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      transition: 'all 0.2s',
+                      cursor: 'pointer',
+                      boxShadow: isSelected ? '0 0 12px rgba(16, 185, 129, 0.3)' : 'none',
+                    }}
+                  >
+                    <span>{l.name}</span>
+                    {isSelected && (
+                      <span style={{
+                        background: 'var(--vote-yes)',
+                        color: 'white',
+                        borderRadius: '50%',
+                        width: '28px',
+                        height: '28px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1rem',
+                        fontWeight: 'bold',
+                      }}>〇</span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
