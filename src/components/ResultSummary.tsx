@@ -1,4 +1,3 @@
-import React from 'react';
 import { Trophy, CalendarCheck, MapPin } from 'lucide-react';
 import { EventData } from '../types';
 

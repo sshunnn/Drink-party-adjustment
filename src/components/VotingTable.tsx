@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Check, User, Trash2, Calendar, MapPin } from 'lucide-react';
 import { EventData, VoteRecord, VoteType } from '../types';
 
