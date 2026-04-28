@@ -5,8 +5,6 @@ import EventCreation from './components/EventCreation';
 import VotingTable from './components/VotingTable';
 import ResultSummary from './components/ResultSummary';
 
-const STORAGE_KEY = 'nomikai_event_data';
-
 const initialData: EventData = {
   dates: [],
   locations: [],

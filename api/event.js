@@ -2,7 +2,10 @@ import { Redis } from '@upstash/redis';
 
 export default async function handler(req, res) {
   const KV_KEY = 'nomikai_event_data';
-  const redis = Redis.fromEnv();
+  const redis = new Redis({
+    url: process.env.KV_REST_API_URL,
+    token: process.env.KV_REST_API_TOKEN,
+  });
 
   try {
     if (req.method === 'GET') {
