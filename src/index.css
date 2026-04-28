@@ -182,7 +182,7 @@ input {
 
 .vote-table th,
 .vote-table td {
-  padding: 1rem;
+  padding: 1.25rem 1rem;
   border-bottom: 1px solid var(--border-glass);
   white-space: nowrap;
 }
@@ -203,21 +203,56 @@ input {
 }
 
 .vote-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
   font-weight: bold;
-  color: white;
-  background: var(--vote-none);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.vote-btn.yes { background: var(--vote-yes); }
-.vote-btn.maybe { background: var(--vote-maybe); }
-.vote-btn.no { background: var(--vote-no); }
+.vote-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px) scale(1.05);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.vote-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.95);
+}
+
+.vote-btn.yes { 
+  background: var(--vote-yes); 
+  border-color: var(--vote-yes);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  color: white;
+}
+
+.vote-btn.no { 
+  background: var(--vote-no); 
+  border-color: var(--vote-no);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  color: white;
+}
+
+/* Highlight Input Row */
+.input-row td {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.02));
+  border-top: 2px solid var(--accent-gold);
+  border-bottom: 2px solid var(--accent-gold);
+}
+.input-row td.sticky-col {
+  background: linear-gradient(90deg, #2b3543, #222b38); /* Opaque match for glass on sticky */
+}
 
 /* Anim */
 @keyframes fadeIn {
@@ -229,7 +264,63 @@ input {
   animation: fadeIn 0.4s ease-out forwards;
 }
 
-/* Badge */
+/* Step UI */
+.step-section {
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-glass);
+  margin-bottom: 1.5rem;
+  transition: all 0.4s ease;
+}
+
+.step-disabled {
+  opacity: 0.3;
+  pointer-events: none;
+  filter: grayscale(80%);
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.step-number {
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.choice-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+.choice-card:hover {
+  border-color: var(--border-glass);
+  background: rgba(255, 255, 255, 0.08);
+}
+.choice-card-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
 .badge {
   display: inline-block;
   padding: 0.25rem 0.75rem;

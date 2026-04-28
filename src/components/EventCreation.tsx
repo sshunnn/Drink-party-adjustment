@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, X, Calendar, MapPin, Users } from 'lucide-react';
 import { Candidate } from '../types';
+import { formatDateWithDay } from '../utils';
 
 interface EventCreationProps {
   dates: Candidate[];
@@ -80,7 +81,7 @@ export default function EventCreation({ dates, locations, participants, onUpdate
           <div className="flex-col gap-2">
             {dates.map((date) => (
               <div key={date.id} className="flex justify-between items-center" style={{ padding: '0.5rem 1rem', background: 'var(--bg-secondary)', borderRadius: '8px' }}>
-                <span>{date.name}</span>
+                <span>{formatDateWithDay(date.name)}</span>
                 <button onClick={() => removeDate(date.id)} className="btn-icon" style={{ color: 'var(--vote-no)' }}>
                   <X size={16} />
                 </button>

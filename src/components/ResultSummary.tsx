@@ -1,5 +1,6 @@
 import { Trophy, CalendarCheck, MapPin } from 'lucide-react';
 import { EventData } from '../types';
+import { formatDateWithDay } from '../utils';
 
 interface ResultSummaryProps {
   eventData: EventData;
@@ -45,7 +46,7 @@ export default function ResultSummary({ eventData }: ResultSummaryProps) {
               <CalendarCheck size={16} /> 最も人気の日程
             </h3>
             <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--accent-gold-light)', marginBottom: '0.5rem' }}>
-              {bestDate.name}
+              {formatDateWithDay(bestDate.name)}
             </p>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
               スコア: {bestDate.score} (〇: {bestDate.yesCount}人)
