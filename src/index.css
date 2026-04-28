@@ -1,18 +1,32 @@
+/* ===================================================
+   華麗なる居酒屋 — 和モダン・ブランドデザイン
+   Color Palette: 和紙白 / 漆黒 / 金箔 / 紅梅 / 墨
+   =================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
 :root {
-  --bg-primary: #0f172a; /* Slate 900 */
-  --bg-secondary: #1e293b; /* Slate 800 */
-  --bg-glass: rgba(255, 255, 255, 0.05);
-  --bg-glass-hover: rgba(255, 255, 255, 0.1);
-  --border-glass: rgba(255, 255, 255, 0.1);
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --accent-gold: #f59e0b;
-  --accent-gold-light: #fbbf24;
-  --accent-gold-dark: #d97706;
-  --vote-yes: #10b981; /* Emerald 500 */
-  --vote-maybe: #eab308; /* Yellow 500 */
-  --vote-no: #ef4444; /* Red 500 */
-  --vote-none: rgba(255, 255, 255, 0.1);
+  --bg-primary: #faf7f2;        /* 和紙 (washi) warm white */
+  --bg-secondary: #f4efe6;      /* 生成り (kina-ri) */
+  --bg-card: #ffffff;
+  --bg-panel: #fdf9f3;
+  --border-light: #e8dfd0;
+  --border-medium: #d4c4a8;
+  --text-primary: #1a1208;      /* 漆黒 (urushi) */
+  --text-secondary: #6b5e4a;    /* 焦茶 (kogecha) */
+  --text-muted: #9e8f7c;
+  --accent-gold: #c9960c;       /* 金箔 (kinpaku) */
+  --accent-gold-light: #e8b020;
+  --accent-gold-pale: #fdf3d6;
+  --accent-red: #b91c1c;        /* 紅梅 (kobai) */
+  --accent-red-light: #dc2626;
+  --accent-red-pale: #fef2f2;
+  --vote-yes: #16a34a;
+  --vote-yes-pale: #dcfce7;
+  --vote-no: #b91c1c;
+  --vote-no-pale: #fef2f2;
+  --shadow-sm: 0 1px 4px rgba(100, 80, 40, 0.08);
+  --shadow-md: 0 4px 16px rgba(100, 80, 40, 0.12);
+  --shadow-lg: 0 8px 32px rgba(100, 80, 40, 0.16);
 }
 
 * {
@@ -22,17 +36,39 @@
 }
 
 body {
-  font-family: 'Inter', 'Noto Sans JP', sans-serif;
-  background: radial-gradient(circle at top left, #1e293b, #0f172a);
-  background-attachment: fixed;
+  font-family: 'Noto Sans JP', sans-serif;
+  background-color: var(--bg-primary);
+  background-image:
+    url('./design.png');
+  background-repeat: repeat;
+  background-size: 280px 280px;
+  background-position: center;
+  /* Fade the watermark very subtly */
+  position: relative;
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.7;
   min-height: 100vh;
 }
 
+/* Washi-paper overlay to keep content readable */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(250, 247, 242, 0.88);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+}
+
 h1, h2, h3, h4, h5, h6 {
+  font-family: 'Noto Serif JP', serif;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 a {
@@ -42,41 +78,156 @@ a {
 
 button {
   cursor: pointer;
-  font-family: inherit;
+  font-family: 'Noto Sans JP', sans-serif;
   border: none;
   outline: none;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
-input {
-  font-family: inherit;
+input, select {
+  font-family: 'Noto Sans JP', sans-serif;
 }
 
+/* ===================================================
+   Layout
+   =================================================== */
 .container {
-  max-width: 1000px;
+  max-width: 860px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem 1.25rem 4rem;
+  position: relative;
+  z-index: 1;
 }
 
-/* Glass Card */
-.glass-card {
-  background: var(--bg-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border-glass);
-  border-radius: 16px;
-  padding: 2rem;
+/* ===================================================
+   Header / Brand
+   =================================================== */
+.brand-header {
+  text-align: center;
+  padding: 2.5rem 1rem 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-/* Typography */
+.brand-header::after {
+  content: '';
+  display: block;
+  width: 120px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+  margin: 1.5rem auto 0;
+}
+
+.brand-logo {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  margin: 0 auto 0.5rem;
+  display: block;
+  filter: drop-shadow(0 8px 24px rgba(201, 150, 12, 0.5));
+  animation: logoFloat 4s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    filter: drop-shadow(0 8px 24px rgba(201, 150, 12, 0.45));
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+    filter: drop-shadow(0 20px 40px rgba(201, 150, 12, 0.65));
+  }
+}
+
+.brand-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: 0.1em;
+}
+
+.brand-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.2em;
+  margin-top: 0.25rem;
+}
+
+/* ===================================================
+   Cards
+   =================================================== */
+.wa-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  padding: 2rem;
+  margin-bottom: 1.75rem;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.wa-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-gold), var(--accent-gold-light), var(--accent-gold));
+}
+
+/* Keep glass-card as alias for backward compat */
+.glass-card {
+  background: var(--bg-card);
+  /* Double-line Japanese frame: outer gold, inner thin */
+  border: 1px solid var(--border-medium);
+  outline: 3px solid transparent;
+  border-radius: 2px;
+  padding: 2rem;
+  margin-bottom: 1.75rem;
+  box-shadow: var(--shadow-md), inset 0 0 0 1px rgba(201, 150, 12, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, var(--accent-gold) 20%, var(--accent-gold-light) 50%, var(--accent-gold) 80%, transparent 100%);
+}
+
+/* Decorative corner marks */
+.glass-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--border-medium) 20%, var(--border-medium) 80%, transparent 100%);
+}
+
+/* Section Title */
+.wa-card h2, .glass-card h2 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 1.5rem;
+}
+
+/* ===================================================
+   Typography Utilities
+   =================================================== */
 .title-gradient {
-  background: linear-gradient(135deg, var(--accent-gold-light), var(--accent-gold));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
+  color: var(--text-primary);
 }
 
 .text-center { text-align: center; }
@@ -86,33 +237,43 @@ input {
 .mb-8 { margin-bottom: 2rem; }
 .mt-4 { margin-top: 1rem; }
 .mt-8 { margin-top: 2rem; }
+.font-medium { font-weight: 500; }
 
-/* Buttons */
+/* ===================================================
+   Buttons
+   =================================================== */
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+  background: linear-gradient(135deg, var(--accent-gold), #a87c08);
   color: #fff;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: 0.8rem 1.75rem;
+  border-radius: 3px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 14px rgba(201, 150, 12, 0.35);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 6px 20px rgba(201, 150, 12, 0.45);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
 }
 
 .btn-secondary {
-  background: var(--bg-glass);
+  background: var(--bg-secondary);
   color: var(--text-primary);
-  border: 1px solid var(--border-glass);
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border: 1px solid var(--border-medium);
+  padding: 0.8rem 1.75rem;
+  border-radius: 3px;
   font-weight: 500;
+  letter-spacing: 0.05em;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -120,45 +281,54 @@ input {
 }
 
 .btn-secondary:hover {
-  background: var(--bg-glass-hover);
+  background: var(--border-light);
+  border-color: var(--border-medium);
 }
 
 .btn-icon {
   background: transparent;
   color: var(--text-secondary);
-  padding: 0.5rem;
-  border-radius: 50%;
-  display: flex;
+  padding: 0.4rem 0.6rem;
+  border-radius: 3px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.3rem;
+  font-size: 0.85rem;
 }
 
 .btn-icon:hover {
-  background: var(--bg-glass);
+  background: var(--bg-secondary);
   color: var(--text-primary);
 }
 
-/* Inputs */
+/* ===================================================
+   Inputs
+   =================================================== */
 .input-field {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--border-glass);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-medium);
   color: var(--text-primary);
   padding: 0.75rem 1rem;
-  border-radius: 8px;
+  border-radius: 3px;
   width: 100%;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-size: 0.95rem;
 }
 
 .input-field:focus {
   border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(201, 150, 12, 0.12);
   outline: none;
 }
 
 .input-field::placeholder {
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
-/* Flex utilities */
+/* ===================================================
+   Flex Utilities
+   =================================================== */
 .flex { display: flex; }
 .flex-col { display: flex; flex-direction: column; }
 .items-center { align-items: center; }
@@ -167,11 +337,13 @@ input {
 .gap-2 { gap: 0.5rem; }
 .gap-4 { gap: 1rem; }
 
-/* Voting Grid */
+/* ===================================================
+   Vote Table
+   =================================================== */
 .vote-table-container {
   overflow-x: auto;
-  border-radius: 12px;
-  border: 1px solid var(--border-glass);
+  border-radius: 3px;
+  border: 1px solid var(--border-light);
 }
 
 .vote-table {
@@ -182,157 +354,232 @@ input {
 
 .vote-table th,
 .vote-table td {
-  padding: 1.25rem 1rem;
-  border-bottom: 1px solid var(--border-glass);
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--border-light);
   white-space: nowrap;
+  font-size: 0.9rem;
 }
 
 .vote-table th {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-secondary);
   font-weight: 600;
   color: var(--text-secondary);
+  font-family: 'Noto Serif JP', serif;
+  letter-spacing: 0.05em;
 }
 
 .vote-table th.sticky-col,
 .vote-table td.sticky-col {
   position: sticky;
   left: 0;
-  background: var(--bg-secondary);
+  background: var(--bg-card);
   z-index: 1;
-  border-right: 1px solid var(--border-glass);
+  border-right: 1px solid var(--border-light);
 }
 
+.vote-table th.sticky-col {
+  background: var(--bg-secondary);
+}
+
+.vote-table tbody tr:hover {
+  background: var(--bg-panel);
+}
+
+.vote-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ===================================================
+   Vote Buttons
+   =================================================== */
 .vote-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 3px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: bold;
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
 }
 
 .vote-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px) scale(1.05);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: var(--border-light);
+  transform: translateY(-1px) scale(1.08);
+  border-color: var(--border-medium);
 }
 
 .vote-btn:active:not(:disabled) {
   transform: translateY(0) scale(0.95);
 }
 
-.vote-btn.yes { 
-  background: var(--vote-yes); 
+.vote-btn.yes {
+  background: var(--vote-yes-pale);
   border-color: var(--vote-yes);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-  color: white;
+  color: var(--vote-yes);
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.2);
 }
 
-.vote-btn.no { 
-  background: var(--vote-no); 
+.vote-btn.no {
+  background: var(--vote-no-pale);
   border-color: var(--vote-no);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-  color: white;
+  color: var(--vote-no);
+  box-shadow: 0 2px 8px rgba(185, 28, 28, 0.15);
 }
 
-/* Highlight Input Row */
-.input-row td {
-  background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.02));
-  border-top: 2px solid var(--accent-gold);
-  border-bottom: 2px solid var(--accent-gold);
-}
-.input-row td.sticky-col {
-  background: linear-gradient(90deg, #2b3543, #222b38); /* Opaque match for glass on sticky */
-}
-
-/* Anim */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
-}
-
-/* Step UI */
+/* ===================================================
+   Step UI — 単数・短冊骎風
+   =================================================== */
 .step-section {
-  padding: 1.5rem;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--border-glass);
-  margin-bottom: 1.5rem;
-  transition: all 0.4s ease;
+  padding: 1.5rem 1.5rem 1.5rem 1.75rem;
+  border-radius: 0 2px 2px 0;
+  background: var(--bg-panel);
+  /* 短冊風: 左端に金の太線 */
+  border-left: 4px solid var(--accent-gold);
+  border-top: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 1.25rem;
+  transition: all 0.35s ease;
+  position: relative;
+}
+
+.step-section::before {
+  content: '';
+  position: absolute;
+  top: 6px; bottom: 6px; left: -8px;
+  width: 2px;
+  background: var(--accent-gold-light);
+  border-radius: 2px;
+  opacity: 0.5;
 }
 
 .step-disabled {
-  opacity: 0.3;
+  opacity: 0.32;
   pointer-events: none;
-  filter: grayscale(80%);
+  filter: grayscale(60%);
 }
 
 .step-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
+  gap: 0.6rem;
+  font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   color: var(--text-primary);
+  font-family: 'Noto Serif JP', serif;
+  letter-spacing: 0.06em;
 }
 
 .step-number {
-  background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+  background: linear-gradient(135deg, var(--accent-gold), #a87c08);
   color: #fff;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(201, 150, 12, 0.35);
 }
 
+/* Choice cards — 短冊風 (tanzaku) */
 .choice-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  background: var(--bg-secondary);
-  border-radius: 12px;
-  margin-bottom: 0.75rem;
-  border: 1px solid transparent;
+  padding: 0.85rem 1.25rem;
+  background: var(--bg-card);
+  border-radius: 0 3px 3px 0;
+  margin-bottom: 0.6rem;
+  border-left: 3px solid var(--border-medium);
+  border-top: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
   transition: all 0.2s;
 }
+
 .choice-card:hover {
-  border-color: var(--border-glass);
-  background: rgba(255, 255, 255, 0.08);
+  border-left-color: var(--accent-gold);
+  background: var(--accent-gold-pale);
+  box-shadow: var(--shadow-sm);
+  transform: translateX(2px);
 }
+
 .choice-card-title {
-  font-size: 1.1rem;
+  font-size: 0.98rem;
   font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
 }
+
+/* ===================================================
+   Badge
+   =================================================== */
 .badge {
   display: inline-block;
   padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
+  border-radius: 2px;
+  font-size: 0.8rem;
   font-weight: 600;
-  background: rgba(245, 158, 11, 0.2);
-  color: var(--accent-gold-light);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  letter-spacing: 0.08em;
+  background: var(--accent-gold-pale);
+  color: var(--accent-gold);
+  border: 1px solid rgba(201, 150, 12, 0.3);
 }
 
+/* ===================================================
+   Best Candidate Card
+   =================================================== */
 .best-candidate {
-  border: 1px solid var(--accent-gold);
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), transparent);
+  border-left: 3px solid var(--accent-gold);
+  background: var(--accent-gold-pale);
+  padding: 1.25rem 1.5rem;
+  border-radius: 0 3px 3px 0;
+}
+
+/* ===================================================
+   Divider
+   =================================================== */
+.wa-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-medium), transparent);
+  margin: 1.5rem 0;
+}
+
+/* ===================================================
+   Admin Badge
+   =================================================== */
+.admin-badge {
+  display: inline-block;
+  padding: 0.3rem 1rem;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background: var(--accent-red-pale);
+  color: var(--accent-red);
+  border: 1px solid rgba(185, 28, 28, 0.25);
+}
+
+/* ===================================================
+   Animations
+   =================================================== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }

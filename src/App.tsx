@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Wine, Copy } from 'lucide-react';
+import { Copy } from 'lucide-react';
 import { EventData, Candidate, VoteRecord } from './types';
 import EventCreation from './components/EventCreation';
 import VotingTable from './components/VotingTable';
 import ResultSummary from './components/ResultSummary';
+import logoImg from './design.png';
+import { useTransparentImage } from './hooks/useTransparentImage';
+
 
 const initialData: EventData = {
   dates: [],
@@ -16,6 +19,7 @@ function App() {
   const [eventData, setEventData] = useState<EventData>(initialData);
   const [isLoaded, setIsLoaded] = useState(false);
   const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+  const transparentLogo = useTransparentImage(logoImg, 25);
 
   // Fetch from Vercel API
   useEffect(() => {
@@ -111,19 +115,13 @@ function App() {
 
   return (
     <div className="container animate-fade-in">
-      <header className="text-center mb-8">
-        <div className="flex justify-center items-center mb-4">
-          <div className="btn-icon" style={{ background: 'var(--bg-glass)', width: '64px', height: '64px', color: 'var(--accent-gold)' }}>
-            <Wine size={32} />
-          </div>
-        </div>
-        <h1 className="title-gradient mb-2" style={{ fontSize: '2.5rem' }}>華麗なる居酒屋</h1>
-        <p style={{ color: 'var(--text-secondary)' }}>飲み会日程・場所調整アプリ</p>
+      <header className="brand-header">
+        <img src={transparentLogo || logoImg} alt="華麗なる居酒屋" className="brand-logo" />
+        <h1 className="brand-title">華麗なる居酒屋</h1>
+        <p className="brand-subtitle">飲み会 日程・場所調整</p>
         {isAdmin && (
           <div className="mt-4">
-            <span className="badge" style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}>
-              代表者モードで編集中
-            </span>
+            <span className="admin-badge">代表者モードで編集中</span>
           </div>
         )}
       </header>
@@ -142,8 +140,8 @@ function App() {
 
         {!hasCandidates && !isAdmin && (
           <div className="glass-card text-center" style={{ padding: '4rem 2rem' }}>
-            <Wine size={48} style={{ color: 'var(--text-secondary)', margin: '0 auto 1rem', opacity: 0.5 }} />
-            <h2 className="mb-2">準備中です</h2>
+            <p style={{ fontSize: '3rem', marginBottom: '1rem' }}>🍶</p>
+            <h2 className="mb-2" style={{ color: 'var(--text-primary)' }}>準備中です</h2>
             <p style={{ color: 'var(--text-secondary)' }}>代表者が候補を設定するまでお待ちください。</p>
           </div>
         )}
@@ -164,11 +162,11 @@ function App() {
 
         {isAdmin && (
           <div className="flex justify-center gap-4 mt-8 flex-wrap">
-            <button onClick={copyShareLink} className="btn-primary" style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)', boxShadow: '0 4px 14px rgba(59, 130, 246, 0.3)' }}>
+            <button onClick={copyShareLink} className="btn-primary" style={{ background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', boxShadow: '0 4px 14px rgba(37,99,235,0.3)' }}>
               <Copy size={18} /> 参加者用リンクをコピー
             </button>
             {hasCandidates && (
-              <button onClick={handleReset} className="btn-secondary" style={{ color: 'var(--vote-no)' }}>
+              <button onClick={handleReset} className="btn-secondary" style={{ color: 'var(--accent-red)' }}>
                 データをすべてリセット
               </button>
             )}
