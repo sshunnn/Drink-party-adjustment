@@ -32,7 +32,7 @@ export default function VotingTable({ eventData, onAddVote, onDeleteVote }: Voti
     localStorage.setItem('my_vote_ids', JSON.stringify(updated));
   };
 
-  const setVote = (type: 'date', id: string, vote: VoteType) => {
+  const setVote = (id: string, vote: VoteType) => {
     setDateVotes(prev => ({ ...prev, [id]: prev[id] === vote ? null : vote }));
   };
 
@@ -54,8 +54,6 @@ export default function VotingTable({ eventData, onAddVote, onDeleteVote }: Voti
   // Step completion logic
   const isStep1Done = voterName !== '';
   const isStep2Done = isStep1Done && unvotedDatesCount === 0;
-  // Step3: location step is always ready once step2 is done (not selecting = auto ×)
-  const isStep3Done = isStep2Done;
 
   // Submit is allowed when name + all dates voted
   const canSubmit = isStep1Done && (eventData.dates.length === 0 || isStep2Done);
@@ -145,13 +143,13 @@ export default function VotingTable({ eventData, onAddVote, onDeleteVote }: Voti
                   <span className="choice-card-title">{formatDateWithDay(d.name)}</span>
                   <div className="flex gap-2">
                     <button 
-                      onClick={() => setVote('date', d.id, 'yes')}
+                      onClick={() => setVote(d.id, 'yes')}
                       className={`vote-btn ${dateVotes[d.id] === 'yes' ? 'yes' : ''}`}
                     >
                       〇
                     </button>
                     <button 
-                      onClick={() => setVote('date', d.id, 'no')}
+                      onClick={() => setVote(d.id, 'no')}
                       className={`vote-btn ${dateVotes[d.id] === 'no' ? 'no' : ''}`}
                     >
                       ×
